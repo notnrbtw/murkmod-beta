@@ -15,22 +15,22 @@
 . /usr/share/misc/chromeos-common.sh || :
 
 csys() {
-    if [ "$COMPAT" == "1" ]; then
-        crossystem "$@"
+    if [ "<span class="math-inline">COMPAT" \=\= "1" \]; then
+crossystem "</span>@"
     elif test -f "$ROOT/usr/bin/crossystem.old"; then
-        "$ROOT/usr/bin/crossystem.old" "$@"
+        "<span class="math-inline">ROOT/usr/bin/crossystem\.old" "</span>@"
     else
-        "$ROOT/usr/bin/crossystem" "$@"
+        "<span class="math-inline">ROOT/usr/bin/crossystem" "</span>@"
     fi
 }
 
 sed_escape() {
     echo -n "$1" | while read -n1 ch; do
-        if [[ "$ch" == "" ]]; then
-            echo -n "\n"
-            # dumbass shellcheck not expanding is the entire point
-        fi
-        echo -n "\\x$(printf %x \'"$ch")"
+        if [[ "<span class="math-inline">ch" \=\= "" \]\]; then
+echo \-n "\\n"
+\# dumbass shellcheck not expanding is the entire point
+fi
+echo \-n "\\\\x</span>(printf %x \'"$ch")"
     done
 }
 
@@ -61,8 +61,7 @@ xwtkSaIl8kq7ayTGWMnEWREm5wQxcQ8a2YcCt4LFpDMzMssvJhM50o2223MmDJSbynEhwvhdB8ulxtWB
 dC+T3Oltwyu+E5eE4navNWYrmopEdcq98ytyzzxsVciFcEvmwjO8hGQ28mWKSwUUckpFxBIoe1JIgMfKQqB6jOIdOnsdXcdZxWaW
 AloaPZ1TnEZ0lOIJzpMnMbgihIg5HWDDhNmtxFhaQEH13YKiuv12GfQVk5m3EDmbdnQvA14X8Q4Mn8wwuBtR0W8CXahgiNQrrUOU
 QWwGddFYz5WBFSasKzkkxiWuB7XbzBqtw6IrMEQLmjvZCOoSYcIDsUiBXPLnyOp2nWcFo0pb0bQO7xQmN9ZIpoSUEwwOzAttqAYj
-plFWLEvWXWTS8YZDVCVeQ7722225xEiIwIgggiDoWBzNox2EXyIOwoE76mIbToUJj6bUbExgRBauo6yJBRUgDxObRObSrA3u3W8U
-d1lZb3mYimuBx4oKsOeU+bbltClpzLTVxT7MxuEb0zpZF8w41kM97PjU8gArSoi5M3m5aJfWTaY2yQdyLOB4jwFa+GB6oQEwGrZp
+plFWLEvWXWTS8YZDVCVeQ7722225xEiIwIgggiDoWBzNox2EXyIOwoE76mIbToUJj6bUbExgRBauo6yJBRUgDxObRObSrA3u3W8Ud1lZb3mYimuBx4oKsOeU+bbltClpzLTVxT7MxuEb0zpZF8w41kM97PjU8gArSoi5M3m5aJfWTaY2yQdyLOB4jwFa+GB6oQEwGrZp
 YkmGt/UlMpBsWutQcQ4zJLeVV1nexeEm2HQ4Lg49yyir4ikmR1CGNtJX+8NJ0kHeaGkgLl4qqcjTAc8URQ11u+kzwnS0TvhF4edP
 awwAOAqdw81zcDbpBsIGEhiglbgY7G483XzN5pcUuRivAtuWgw8jRaVZCMRezntBF5VKxFuDlRE5pg3shQpuGjvcNHvsh1XtoqlH
 tiprcosBvsN55tbkshTUksC0RzqXCwqVqiUNti4kgBQqEDjbcrS3XfM08vIXkEWh2Hez5zDYHjGNiGjJFg/KUNo+29CnYtygYm7I
@@ -89,8 +88,8 @@ drop_crossystem_sh() {
 
 escape() {
     case $1 in
-    '' | *[!0-9]*) echo -n "\"$1\"" ;;
-    *) echo -n "$1" ;;
+        '' | *[!0-9]*) echo -n "\"$1\"" ;;
+        *) echo -n "$1" ;;
     esac
 }
 
@@ -104,7 +103,7 @@ crossystem_values() {
 
         key=${pair[0]}
         # cut out all characters after an instance of 2 spaces in a row
-        val="$(echo ${pair[1]} | sed -e 's/  .*//g')"
+        val="$(echo ${pair[1]} | sed -e 's/\ .*//g')"
         if [ "$key" == "devsw_cur" ]; then
             val=0
         fi
