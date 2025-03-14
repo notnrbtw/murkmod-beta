@@ -1,11 +1,15 @@
 #!/bin/bash
 
-# Script to enable automatic updates in Chrome OS
+# Ensure the script runs in Bash
+if [ -z "$BASH_VERSION" ]; then
+    echo "This script must be run with Bash."
+    exit 1
+fi
 
 # Function to fetch and execute the Enable-Updates script
 fetch_and_enable_updates() {
     local url="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/refs/heads/main/Enable-Updates"
-    local temp_file="/usr/local/bin/Enable-Updates.sh"  # Use a path that is executable
+    local temp_file="/tmp/Enable-Updates.sh"  # Use /tmp for temporary storage
 
     # Download the Enable-Updates script
     echo "Fetching the Enable-Updates script from $url"
@@ -23,35 +27,19 @@ fetch_and_enable_updates() {
     echo "Executing the Enable-Updates script..."
     bash "$temp_file"
 
-    # Clean up the temporary file if needed (optional)
-    # rm "$temp_file"
-}
+    # Check for errors during execution
+    if [ $? -ne 0 ]; then
+        echo "The Enable-Updates script encountered an error. Please check the script for issues."
+        exit 1
+    fi
 
-# Function to undo any previous disable updates actions
-undo_disable_autoupdates() {
-    echo "Restoring automatic updates settings..."
-
-    # Example commands to restore settings that might have been changed by Murkmod
-    # This assumes you know what changes were made; adapt these commands as needed.
-
-    # Example: Re-enable automatic updates (you need to adjust this based on actual implementation)
-    # Adjust the path to the correct configuration file
-    sudo sed -i 's/updates_enabled=0/updates_enabled=1/' /path/to/your/update/config/file
-    
-    # Uncomment and modify any specific disable_autoupdates function or related command
-    # sudo sed -i 's/^.*disable_autoupdates.*$/# &/' /etc/somefile.conf
-
-    # If using crossystem, ensure to revert any changes made
-    # Example: Uncomment the next line if it was previously commented out
-    # sudo crossystem dev_default=1
-    
-    echo "Automatic updates should now be enabled."
+    # Clean up the temporary file
+    rm "$temp_file"
 }
 
 # Main function
 main() {
     echo "Starting the process to enable automatic updates..."
-    undo_disable_autoupdates
     fetch_and_enable_updates
     echo "Done!"
 }
