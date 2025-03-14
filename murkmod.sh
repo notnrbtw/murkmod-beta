@@ -2,13 +2,10 @@
 
 CURRENT_MAJOR=6
 CURRENT_MINOR=1
-CURRENT_VERSION=1
+CURRENT_VERSION=2 # Incremented version number
 
-if [[ -z "${MURKMOD_BRANCH}" ]]; then
-  BRANCH="main"
-else
-  BRANCH="${MURKMOD_BRANCH}"
-fi
+# Set the branch for murkmod
+BRANCH="${MURKMOD_BRANCH:-main}"
 
 get_asset() {
     curl -s -f "https://api.github.com/repos/rainestorme/murkmod/contents/$1?ref=$BRANCH" | jq -r ".content" | base64 -d
@@ -25,12 +22,11 @@ get_built_asset_fakemurk() {
 install() {
     TMP=$(mktemp)
     get_asset "$1" >"$TMP"
-    if [ "$?" == "1" ] || ! grep -q '[^[:space:]]' "$TMP"; then
+    if [ "$?" -ne 0 ] || ! grep -q '[^[:space:]]' "$TMP"; then
         echo "Failed to install $1 to $2"
         rm -f "$TMP"
-        exit
+        exit 1
     fi
-    # Don't mv, that would break permissions
     cat "$TMP" >"$2"
     rm -f "$TMP"
 }
@@ -38,12 +34,11 @@ install() {
 install_fakemurk() {
     TMP=$(mktemp)
     get_asset_fakemurk "$1" >"$TMP"
-    if [ "$?" == "1" ] || ! grep -q '[^[:space:]]' "$TMP"; then
+    if [ "$?" -ne 0 ] || ! grep -q '[^[:space:]]' "$TMP"; then
         echo "Failed to install $1 to $2"
         rm -f "$TMP"
-        exit
+        exit 1
     fi
-    # Don't mv, that would break permissions
     cat "$TMP" >"$2"
     rm -f "$TMP"
 }
@@ -51,8 +46,8 @@ install_fakemurk() {
 install_built_fakemurk() {
     TMP=$(mktemp)
     get_built_asset_fakemurk "$1" >"$TMP"
-    if [ "$?" == "1" ] || ! grep -q '[^[:space:]]' "$TMP"; then
-        echo "failed to install $1 to $2"
+    if [ "$?" -ne 0 ] || ! grep -q '[^[:space:]]' "$TMP"; then
+        echo "Failed to install $1 to $2"
         rm -f "$TMP"
         return 1
     fi
@@ -61,9 +56,9 @@ install_built_fakemurk() {
 }
 
 if [ "$BRANCH" != "main" ]; then
-    echo "Using branch $BRANCH - Keep in mind any alternate branches can be unstable and are not reccomended!"
+    echo "Using branch $BRANCH - be aware that alternate branches may be unstable!"
     if [ "$0" != "/usr/local/tmp/murkmod.sh" ]; then
-        echo "Fetching installer on alternate branch..."
+        echo "Fetching installer from alternate branch..."
         mkdir -p /usr/local/tmp
         install "murkmod.sh" /usr/local/tmp/murkmod.sh
         chmod 755 /usr/local/tmp/murkmod.sh
@@ -77,31 +72,30 @@ if [ "$BRANCH" != "main" ]; then
 fi
 
 show_logo() {
-    echo -e "                      __                      .___\n  _____  __ _________|  | __ _____   ____   __| _/\n /     \|  |  \_  __ \  |/ //     \ /  _ \ / __ | \n|  Y Y  \  |  /|  | \/    <|  Y Y  (  <_> ) /_/ | \n|__|_|  /____/ |__|  |__|_ \__|_|  /\____/\____ | \n      \/                  \/     \/            \/\n"
+    echo -e "                      __                      .___\n  _____  __ _________|  | __ _____   ____   __| _/\n /     \\|  |  \\_  __ \\  |/ //     \\ /  _ \\ / __ | \n|  Y Y  \\  |  /|  | \\/    <|  Y Y  (  <_> ) /_/ | \n|__|_|  /____/ |__|  |__|_ \\__|_|  /\\____/\\____ | \n      \\/                  \\/     \\/            \\/\n"
     echo "        The fakemurk plugin manager - v$CURRENT_MAJOR.$CURRENT_MINOR.$CURRENT_VERSION"
 }
 
 lsbval() {
-  local key="$1"
-  local lsbfile="${2:-/etc/lsb-release}"
+    local key="$1"
+    local lsbfile="${2:-/etc/lsb-release}"
 
-  if ! echo "${key}" | grep -Eq '^[a-zA-Z0-9_]+$'; then
-    return 1
-  fi
+    if ! echo "${key}" | grep -Eq '^[a-zA-Z0-9_]+$'; then
+        return 1
+    fi
 
-  sed -E -n -e \
-    "/^[[:space:]]*${key}[[:space:]]*=/{
-      s:^[^=]+=[[:space:]]*::
-      s:[[:space:]]+$::
-      p
+    sed -E -n -e "/^[[:space:]]*${key}[[:space:]]*=/ {
+        s:^[^=]+=[[:space:]]*::
+        s:[[:space:]]+$::
+        p
     }" "${lsbfile}"
 }
 
 install_patched_files() {
     install "daemon.sh" /sbin/murkmod-daemon.sh
-    local milestone=$(lsbval CHROMEOS_RELEASE_CHROME_MILESTONE $ROOT/etc/lsb-release)
-    if [ "$milestone" -gt "116" ]; then
-        echo "Detected v116 or higher, using new chromeos_startup"
+    local milestone=$(lsbval CHROMEOS_RELEASE_CHROME_MILESTONE /etc/lsb-release)
+    if [ "$milestone" -ge "120" ]; then
+        echo "Detected ChromeOS version 120 or higher, using new chromeos_startup"
         install "chromeos_startup.sh" /sbin/chromeos_startup
         touch /new-startup
     else
@@ -112,14 +106,13 @@ install_patched_files() {
     install "cr50-update.conf" /etc/init/cr50-update.conf
     install "ssd_util.sh" /usr/share/vboot/bin/ssd_util.sh
     install "image_patcher.sh" /sbin/image_patcher.sh
-    chmod 777 /sbin/murkmod-daemon.sh /sbin/chromeos_startup.sh /sbin/chromeos_startup /usr/bin/crosh /usr/share/vboot/bin/ssd_util.sh /sbin/image_patcher.sh
+    chmod 755 /sbin/murkmod-daemon.sh /sbin/chromeos_startup /usr/bin/crosh /usr/share/vboot/bin/ssd_util.sh /sbin/image_patcher.sh
 }
 
 create_stateful_files() {
-    # This is only here for backwards compatibility
     touch /mnt/stateful_partition/murkmod_version
     echo "$CURRENT_MAJOR $CURRENT_MINOR $CURRENT_VERSION" > /mnt/stateful_partition/murkmod_version
-    
+
     mkdir -p /mnt/stateful_partition/murkmod/plugins
     touch /mnt/stateful_partition/murkmod/settings
     if [ ! -f /mnt/stateful_partition/murkmod/settings ]; then
@@ -145,7 +138,7 @@ do_policy_patch() {
     if [ "$response1" = "$response2" ]; then
         install "pollen.json" /etc/opt/chrome/policies/managed/policy.json
     else
-        read -r -p "Use murkmod reccomended pollen config? [Y/n] " choice
+        read -r -p "Use murkmod recommended pollen config? [Y/n] " choice
         case "$choice" in
             n | N) install_fakemurk "pollen.json" /etc/opt/chrome/policies/managed/policy.json ;;
             *) install "pollen.json" /etc/opt/chrome/policies/managed/policy.json ;;
@@ -158,11 +151,11 @@ set_chronos_password() {
 }
 
 set_sudo_perms() {
-    if ! cat /etc/sudoers | grep chronos; then
-        echo "Sudo permissions are not already set, setting..."
+    if ! grep -q "chronos" /etc/sudoers; then
+        echo "Sudo permissions are not set, setting..."
         echo "chronos ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers 
     else
-        echo "Looks like sudo permissions are already set correctly."
+        echo "Sudo permissions are already set correctly."
     fi
 }
 
@@ -173,7 +166,7 @@ set_cros_debug() {
 check_legacy_daemon() {
     if [ -f /sbin/fakemurk-daemon.sh ]; then
         echo "Found legacy fakemurk daemon, removing..."
-        kill -9 $(pgrep fakemurk)
+        kill -9 $(pgrep fakemurk) || true
         rm -f /sbin/fakemurk-daemon.sh
         mkdir -p /var/murkmod
         echo "Restarting daemon..."
@@ -184,12 +177,11 @@ check_legacy_daemon() {
 murkmod() {
     show_logo
     if [ "$1" != "--dryrun" ]; then
-        if [ ! -f /sbin/fakemurk-daemon.sh ]; then
-            if [ ! -f /sbin/murkmod-daemon.sh ]; then
-                echo "Either your system has a broken fakemurk/murkmod installation or your system doesn't have a fakemurk or murkmod installation at all. (Re)install fakemurk/murkmod, then re-run this script."
-                exit
-            fi
+        if [ ! -f /sbin/fakemurk-daemon.sh ] && [ ! -f /sbin/murkmod-daemon.sh ]; then
+            echo "Either your system has a broken installation or lacks a valid installation of fakemurk or murkmod. (Re)install fakemurk/murkmod, then re-run this script."
+            exit 1
         fi
+
         echo "Checking for emergency shell..."
         check_for_emergencyshell
         echo "Installing patched files..."
@@ -202,19 +194,19 @@ murkmod() {
         do_policy_patch
         echo "Setting chronos user password..."
         set_chronos_password
-        echo "Checking sudo perms..."
+        echo "Checking sudo permissions..."
         set_sudo_perms
         echo "Setting crossystem cros_debug..."
         set_cros_debug
     fi
     read -n 1 -s -r -p "Done. If cros_debug was enabled for the first time, a reboot may be required. Press any key to exit."
-    exit
+    exit 0
 }
 
 if [ "$0" = "$BASH_SOURCE" ]; then
     if [ "$EUID" -ne 0 ]; then
-        echo "Please run this as root from mush. Use option 1 (root shell) instead of any other method of getting to a shell."
-        exit
+        echo "Please run this as root from mush. Use option 1 (root shell) instead of any other method."
+        exit 1
     fi
     murkmod
 fi
