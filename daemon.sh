@@ -41,22 +41,23 @@ doas() {
 }
 
 lsbval() {
-  local key="$1"
-  local lsbfile="${2:-/etc/lsb-release}"
+    local key="$1"
+    local lsbfile="${2:-/etc/lsb-release}"
 
-  if ! echo "${key}" | grep -Eq '^[a-zA-Z0-9_]+$'; then
-    return 1
-  fi
+    if ! echo "${key}" | grep -Eq '^[a-zA-Z0-9_]+$'; then
+        return 1
+    fi
 
-  sed -E -n -e \
-    "/^[[:space:]]*${key}[[:space:]]*=/{
-      s:^[^=]+=[[:space:]]*::
-      s:[[:space:]]+$::
-      p
-    }" "${lsbfile}"
+    sed -E -n -e \
+        "/^[[:space:]]*${key}[[:space:]]*=/{
+            s:^[^=]+=[[:space:]]*::
+            s:[[:space:]]+$::
+            p
+        }" "${lsbfile}"
 }
 
 get_booted_kernnum() {
+    local dst=$(get_largest_cros_blockdev)
     if doas "((\$(cgpt show -n \"$dst\" -i 2 -P) > \$(cgpt show -n \"$dst\" -i 4 -P)))"; then
         echo -n 2
     else
@@ -98,15 +99,15 @@ opposite_num() {
         while true; do
             echo "checking cryptohome status"
             if [ "$(cryptohome --action=is_mounted)" == "true" ]; then
-                if ! [ -z $RACERPID ]; then
+                if ! [ -z "$RACERPID" ]; then
                     echo "Logged in, waiting to kill racer..."
                     sleep 60
-                    kill -9 $RACERPID
+                    kill -9 "$RACERPID"
                     echo "Racer terminated at $(date)"
-                    RACERPID=
+                    RACERPID=""
                 fi
             else
-                if [ -z $RACERPID ]; then 
+                if [ -z "$RACERPID" ]; then
                     launch_racer
                 fi
             fi
@@ -134,7 +135,6 @@ opposite_num() {
         fi
     done
 } &
-
 
 {
     while true; do
@@ -201,7 +201,7 @@ EOF
             echo "Missing backup image, removing restore flag and aborting!"
             rm /mnt/stateful_partition/restore-emergency-backup
         fi
-    else 
+    else
         echo "No need to restore."
     fi
 } &
@@ -213,7 +213,7 @@ EOF
     for file in /mnt/stateful_partition/murkmod/plugins/*.sh; do
         if grep -q "daemon_plugin" "$file"; then
             echo "Spawning plugin $file..."
-            run_plugin $file
+            run_plugin "$file"
         fi
         sleep 1
     done
