@@ -10,31 +10,30 @@
 # v1.1.0 - implemented <var>?<value> functionality (searches for value in var)
 # v1.0.0 - basic functionality implemented
 
-# script gutted by rainestorme for murkmod
+# script modified for murkmod
 
 . /usr/share/misc/chromeos-common.sh || :
 
 csys() {
-    if [ "<span class="math-inline">COMPAT" \=\= "1" \]; then
-crossystem "</span>@"
+    if [ "$COMPAT" == "1" ]; then
+        crossystem "$@"
     elif test -f "$ROOT/usr/bin/crossystem.old"; then
-        "<span class="math-inline">ROOT/usr/bin/crossystem\.old" "</span>@"
+        "$ROOT/usr/bin/crossystem.old" "$@"
     else
-        "<span class="math-inline">ROOT/usr/bin/crossystem" "</span>@"
+        "$ROOT/usr/bin/crossystem" "$@"
     fi
 }
 
 sed_escape() {
     echo -n "$1" | while read -n1 ch; do
-        if [[ "<span class="math-inline">ch" \=\= "" \]\]; then
-echo \-n "\\n"
-\# dumbass shellcheck not expanding is the entire point
-fi
-echo \-n "\\\\x</span>(printf %x \'"$ch")"
+        if [[ "$ch" == "" ]]; then
+            echo -n "\n"
+        fi
+        echo -n "\\x$(printf %x "$ch")"
     done
 }
 
-# the only reason this blob is still here is because i don't want to add network dependency for a boot-time script
+# The only reason this blob is still here is because I don't want to add network dependency for a boot-time script
 raw_crossystem_sh() {
     base64 -d <<-EOF | bunzip2 -dc
 QlpoOTFBWSZTWRXa7LcAA5f/kH/+Zvh///h////frv////4AEGAL+t924LTV3srpcuYdUAAAAAGlAAEMSE0mCaADRNU/SR6j0yma
@@ -61,7 +60,8 @@ xwtkSaIl8kq7ayTGWMnEWREm5wQxcQ8a2YcCt4LFpDMzMssvJhM50o2223MmDJSbynEhwvhdB8ulxtWB
 dC+T3Oltwyu+E5eE4navNWYrmopEdcq98ytyzzxsVciFcEvmwjO8hGQ28mWKSwUUckpFxBIoe1JIgMfKQqB6jOIdOnsdXcdZxWaW
 AloaPZ1TnEZ0lOIJzpMnMbgihIg5HWDDhNmtxFhaQEH13YKiuv12GfQVk5m3EDmbdnQvA14X8Q4Mn8wwuBtR0W8CXahgiNQrrUOU
 QWwGddFYz5WBFSasKzkkxiWuB7XbzBqtw6IrMEQLmjvZCOoSYcIDsUiBXPLnyOp2nWcFo0pb0bQO7xQmN9ZIpoSUEwwOzAttqAYj
-plFWLEvWXWTS8YZDVCVeQ7722225xEiIwIgggiDoWBzNox2EXyIOwoE76mIbToUJj6bUbExgRBauo6yJBRUgDxObRObSrA3u3W8Ud1lZb3mYimuBx4oKsOeU+bbltClpzLTVxT7MxuEb0zpZF8w41kM97PjU8gArSoi5M3m5aJfWTaY2yQdyLOB4jwFa+GB6oQEwGrZp
+plFWLEvWXWTS8YZDVCVeQ7722225xEiIwIgggiDoWBzNox2EXyIOwoE76mIbToUJj6bUbExgRBauo6yJBRUgDxObRObSrA3u3W8U
+d1lZb3mYimuBx4oKsOeU+bbltClpzLTVxT7MxuEb0zpZF8w41kM97PjU8gArSoi5M3m5aJfWTaY2yQdyLOB4jwFa+GB6oQEwGrZp
 YkmGt/UlMpBsWutQcQ4zJLeVV1nexeEm2HQ4Lg49yyir4ikmR1CGNtJX+8NJ0kHeaGkgLl4qqcjTAc8URQ11u+kzwnS0TvhF4edP
 awwAOAqdw81zcDbpBsIGEhiglbgY7G483XzN5pcUuRivAtuWgw8jRaVZCMRezntBF5VKxFuDlRE5pg3shQpuGjvcNHvsh1XtoqlH
 tiprcosBvsN55tbkshTUksC0RzqXCwqVqiUNti4kgBQqEDjbcrS3XfM08vIXkEWh2Hez5zDYHjGNiGjJFg/KUNo+29CnYtygYm7I
@@ -77,13 +77,11 @@ bzVPfi2mxFTkn/F3JFOFCQFdrstw
 EOF
 }
 
-
 drop_crossystem_sh() {
-    # this weird space replacement is used because "read" has odd behaviour with spaces and newlines
-    # i don't need to worry about the jank because crossystem will never have user controlled data
+    # Replace spaces for compatibility with `read`
     vals=$(sed "s/ /THIS_IS_A_SPACE_DUMBASS/g" <<<"$(crossystem_values)")
     raw_crossystem_sh | sed -e "s/#__SED_REPLACEME_CROSSYSTEM_VALUES#/$(sed_escape "$vals")/g" | sed -e "s/THIS_IS_A_SPACE_DUMBASS/ /g" >"$ROOT/usr/bin/crossystem"
-    chmod 777 "$ROOT/usr/bin/crossystem"
+    chmod 755 "$ROOT/usr/bin/crossystem"
 }
 
 escape() {
@@ -97,55 +95,38 @@ crossystem_values() {
     readarray -t csys_lines <<<"$(csys)"
     for element in "${csys_lines[@]}"; do
         line_stripped=$(echo "$element" | sed -e "s/#.*//g" | sed -e 's/ .*=/=/g')
-        # sed 1: cuts out all chars after the #
-        # sed 2: cuts out all spaces before =
         IFS='=' read -r -a pair <<<"$line_stripped"
 
         key=${pair[0]}
-        # cut out all characters after an instance of 2 spaces in a row
-        val="$(echo ${pair[1]} | sed -e 's/\ .*//g')"
-        if [ "$key" == "devsw_cur" ]; then
-            val=0
-        fi
-        if [ "$key" == "devsw_boot" ]; then
-            val=0
-        fi
-        if [ "$key" == "mainfw_type" ]; then
-            val="normal"
-        fi
-        if [ "$key" == "mainfw_act" ]; then
-            val="A"
-        fi
-        if [ "$key" == "cros_debug" ]; then
-            val=1
-        fi
-        if [ "$key" == "dev_boot_legacy" ]; then
-            val=0
-        fi
-        if [ "$key" == "dev_boot_signed_only" ]; then
-            val=0
-        fi
-        if [ "$key" == "dev_boot_usb" ]; then
-            val=0
-        fi
-        if [ "$key" == "dev_default_boot" ]; then
-            val="disk"
-        fi
-        if [ "$key" == "dev_enable_udc" ]; then
-            val=0
-        fi
-        if [ "$key" == "alt_os_enabled" ]; then
-            val=0
-        fi
-        if [ "$key" == "recoverysw_boot" ]; then
-            val=0
-        fi
-        if [ "$key" == "recoverysw_cur" ]; then
-            val=0
-        fi
+        val="$(echo ${pair[1]} | sed -e 's/  .*//g')"
+        
+        # Static values for various keys
+        case "$key" in
+            devsw_cur|devsw_boot|recoverysw_boot|recoverysw_cur)
+                val=0
+                ;;
+            mainfw_type)
+                val="normal"
+                ;;
+            mainfw_act)
+                val="A"
+                ;;
+            cros_debug|dev_enable_udc|alt_os_enabled)
+                val=0
+                ;;
+            dev_boot_legacy|dev_boot_signed_only|dev_boot_usb)
+                val=0
+                ;;
+            dev_default_boot)
+                val="disk"
+                ;;
+        esac
+        
         echo "$key=$(escape "$val")"
     done
 }
 
+# Backup the original crossystem binary
 mv "$ROOT/usr/bin/crossystem" "$ROOT/usr/bin/crossystem.old"
+# Drop the new crossystem implementation
 drop_crossystem_sh
