@@ -1,47 +1,52 @@
 #!/bin/bash
 
-# Full script to fetch and enable automatic updates in murkmod
+# Script to enable automatic updates in Chrome OS
 
-# Function to fetch and update the murkmod.sh script
+# Function to fetch and execute the Enable-Updates script
 fetch_and_enable_updates() {
-    local url="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/main/murkmod.sh"
-    local temp_file="/tmp/murkmod.sh"
+    local url="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/refs/heads/main/Enable-Updates"
+    local temp_file="/tmp/Enable-Updates.sh"
 
-    # Download the script
-    echo "Fetching the murkmod.sh script from $url"
+    # Download the Enable-Updates script
+    echo "Fetching the Enable-Updates script from $url"
     curl -s -o "$temp_file" "$url"
 
     if [ $? -ne 0 ]; then
-        echo "Failed to download the script. Exiting..."
+        echo "Failed to download the Enable-Updates script. Exiting..."
         exit 1
     fi
 
-    # Ensure automatic updates are enabled
-    echo "Ensuring automatic updates are enabled..."
-    
-    # Replace any occurrences of updates_enabled=0 with updates_enabled=1
-    sed -i 's/updates_enabled=0/updates_enabled=1/' "$temp_file"
-
-    # Comment out any function that disables automatic updates
-    sed -i 's/^.*disable_autoupdates.*$/# &/' "$temp_file"
-
-    # Comment out any crossystem commands that might disable updates
-    sed -i 's/^.*crossystem.*$/# &/' "$temp_file"
-
-    # Optionally, print the modified script for review (uncomment if needed)
-    # echo "Modified script content:"
-    # cat "$temp_file"
-    
-    # Execute the modified script if necessary
-    echo "Executing the modified murkmod.sh script..."
+    # Execute the downloaded script
+    echo "Executing the Enable-Updates script..."
     bash "$temp_file"
 
-    # Clean up
+    # Clean up the temporary file
     rm "$temp_file"
 }
 
+# Function to undo any previous disable updates actions
+undo_disable_autoupdates() {
+    echo "Restoring automatic updates settings..."
+    # Example commands to restore settings that might have been changed by Murkmod
+    # This assumes you know what changes were made; adapt these commands as needed.
+
+    # Example: Re-enable automatic updates (you need to adjust this based on actual implementation)
+    sudo sed -i 's/updates_enabled=0/updates_enabled=1/' /path/to/your/update/config/file
+    
+    # Uncomment and modify any specific disable_autoupdates function or related command
+    # sudo sed -i 's/^.*disable_autoupdates.*$/# &/' /etc/somefile.conf
+
+    # If using crossystem, ensure to revert any changes made
+    # Example: Uncomment the next line if it was previously commented out
+    # sudo crossystem dev_default=1
+    
+    echo "Automatic updates should now be enabled."
+}
+
+# Main function
 main() {
-    echo "Starting the Murkmod automatic updates enable fix..."
+    echo "Starting the process to enable automatic updates..."
+    undo_disable_autoupdates
     fetch_and_enable_updates
     echo "Done!"
 }
