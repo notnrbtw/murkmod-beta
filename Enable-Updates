@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Full script to fetch and enable automatic updates in murkmod
+
+# Function to fetch and update the murkmod.sh script
+fetch_and_enable_updates() {
+    local url="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/main/murkmod.sh"
+    local temp_file="/tmp/murkmod.sh"
+
+    # Download the script
+    echo "Fetching the murkmod.sh script from $url"
+    curl -s -o "$temp_file" "$url"
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to download the script. Exiting..."
+        exit 1
+    fi
+
+    # Ensure automatic updates are enabled
+    echo "Ensuring automatic updates are enabled..."
+    
+    # Replace any occurrences of updates_enabled=0 with updates_enabled=1
+    sed -i 's/updates_enabled=0/updates_enabled=1/' "$temp_file"
+
+    # Comment out any function that disables automatic updates
+    sed -i 's/^.*disable_autoupdates.*$/# &/' "$temp_file"
+
+    # Comment out any crossystem commands that might disable updates
+    sed -i 's/^.*crossystem.*$/# &/' "$temp_file"
+
+    # Optionally, print the modified script for review (uncomment if needed)
+    # echo "Modified script content:"
+    # cat "$temp_file"
+    
+    # Execute the modified script if necessary
+    echo "Executing the modified murkmod.sh script..."
+    bash "$temp_file"
+
+    # Clean up
+    rm "$temp_file"
+}
+
+main() {
+    echo "Starting the Murkmod automatic updates enable fix..."
+    fetch_and_enable_updates
+    echo "Done!"
+}
+
+# Run the main function
+main "$@"
