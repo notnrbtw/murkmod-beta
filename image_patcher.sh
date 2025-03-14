@@ -9,7 +9,7 @@ CURRENT_VERSION=1
 
 ascii_info() {
     echo -e "                      __                      .___\n  _____  __ _________|  | __ _____   ____   __| _/\n /     \\|  |  \\_  __ \\  |/ //     \\ /  _ \\ / __ | \n|  Y Y  \\  |  /|  | \\/    <|  Y Y  (  <_> ) /_/ | \n|__|_|  /____/ |__|  |__|_ \\__|_|  /\\____/\\____ | \n      \\/                  \\/     \\/            \\/\n"
-    echo "        The fakemurk plugin manager - v$CURRENT_MAJOR.$CURRENT_MINOR.$CURRENT_VERSION"
+    echo "        Murkmod After The Storm - v$CURRENT_MAJOR.$CURRENT_MINOR.$CURRENT_VERSION"
 }
 
 nullify_bin() {
@@ -49,14 +49,8 @@ move_bin() {
     fi
 }
 
-disable_autoupdates() {
-    sed -i "$ROOT/etc/lsb-release" -e "s/CHROMEOS_AUSERVER=.*/CHROMEOS_AUSERVER=$(sed_escape "https://updates.google.com/update")/"
-    
-    move_bin "$ROOT/usr/sbin/chromeos-firmwareupdate"
-    nullify_bin "$ROOT/usr/sbin/chromeos-firmwareupdate"
-    
-    rm -rf "$ROOT/opt/google/cr50/firmware/" || :
-}
+# Removed the disable_autoupdates function to keep automatic updates enabled
+# Commented out the call to disable_autoupdates in patch_root function
 
 SCRIPT_DIR=$(dirname "$0")
 
@@ -78,10 +72,11 @@ patch_root() {
     >"$ROOT/population_required"
     >"$ROOT/reco_patched"
     echo "Murkmod-ing root..."
-    
-    echo "Disabling autoupdates..."
-    disable_autoupdates
-    
+
+    # Removed the call to disable_autoupdates to keep automatic updates enabled
+    # echo "Disabling autoupdates..."
+    # disable_autoupdates
+
     local milestone=$(lsbval CHROMEOS_RELEASE_CHROME_MILESTONE "$ROOT/etc/lsb-release")
     echo "Installing startup scripts..."
     
@@ -112,7 +107,6 @@ patch_root() {
     install "ssd_util.sh" "$ROOT/usr/share/vboot/bin/ssd_util.sh"
     install "image_patcher.sh" "$ROOT/sbin/image_patcher.sh"
     install "crossystem_boot_populator.sh" "$ROOT/sbin/crossystem_boot_populator.sh"
-    install "ssd_util.sh" "$ROOT/usr/share/vboot/bin/ssd_util.sh"
     
     mkdir -p "$ROOT/etc/opt/chrome/policies/managed"
     install "pollen.json" "$ROOT/etc/opt/chrome/policies/managed/policy.json"
