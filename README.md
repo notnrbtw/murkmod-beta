@@ -17,11 +17,25 @@ murkmod is a continuation of fakemurk and mush that includes additional useful u
 
 Enter developer mode (either while enrolled or unenrolled) and boot into ChromeOS. Connect to WiFi, but don't log in. Open VT2 by pressing `Ctrl+Alt+F2 (Forward)` and log in as `root`. Run the following command:
 
+First install Fakemurk!
+
+run this command: 
+
+bash <(curl -SLk https://bit.ly/fakemurk)
+
+if that doesnt work then use the normal fakemurk command, which is this:
+
+bash <(curl -SLk https://github.com/MercuryWorkshop/fakemurk/releases/latest/download/fakemurk.sh)
+
+After you restart then use the commands below! (you can use tinyurl to make a shortened url or bit.ly)
+
 ```sh
 bash <(curl -SLk https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/refs/heads/main/murkmod.sh)
 
 If you dont want to use that URL because its too long make a bit.ly link, I might make a bit.ly link later on as well but I'm lazy so I don't know.
 ```
+If this doesnt work make sure yoou're in root (aka make sure your user name is RED ! not Green in VT-2 Terminal)
+
 
 Select the chromeOS milestone you want to install with murkmod. The script will then automatically download the correct recovery image, patch it, and install it to your device. Once the installation is complete, the system will reboot into a murkmod-patched rootfs.
 
