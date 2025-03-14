@@ -73,7 +73,7 @@ fi
 
 show_logo() {
     echo -e "                      __                      .___\n  _____  __ _________|  | __ _____   ____   __| _/\n /     \\|  |  \\_  __ \\  |/ //     \\ /  _ \\ / __ | \n|  Y Y  \\  |  /|  | \\/    <|  Y Y  (  <_> ) /_/ | \n|__|_|  /____/ |__|  |__|_ \\__|_|  /\\____/\\____ | \n      \\/                  \\/     \\/            \\/\n"
-    echo "        Murkmod After The Storm - v$CURRENT_MAJOR.$CURRENT_MINOR.$CURRENT_VERSION"
+    echo "              Murkmod After The Storm"
 }
 
 lsbval() {
