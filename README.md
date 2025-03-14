@@ -1,3 +1,9 @@
+# Murkmod After The Storm
+
+When I say storm I'm talking about Murkmod not working (for me at least) on version 116+, it works on older versions only, this code is very basic so dont expect it to 100% work but I'd say this is better since at least it works (to my knowledge) since its working on my chromebook. I don't own murkmod and I don't even know Rainestorme so dont talk to me about Murkmods issues, I'm not smart so dont even talk to me at all really lmao, if you have an issue make an issue real quick and i'll try to fix it. have a nice day!
+
+# ALL CREDITS TO 'rainestorme' and r58Playz !!!!!
+
 # murkmod
 
 murkmod is a continuation of fakemurk and mush that includes additional useful utilities, with the most prominent being a plugin manager.
@@ -10,7 +16,9 @@ murkmod is a continuation of fakemurk and mush that includes additional useful u
 Enter developer mode (either while enrolled or unenrolled) and boot into ChromeOS. Connect to WiFi, but don't log in. Open VT2 by pressing `Ctrl+Alt+F2 (Forward)` and log in as `root`. Run the following command:
 
 ```sh
-bash <(curl -SLk https://bit.ly/murkmod)
+bash <(curl -SLk https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/refs/heads/main/murkmod.sh)
+
+If you dont want to use that URL because its too long make a bit.ly link, I might make a bit.ly link later on as well but I'm lazy so I don't know.
 ```
 
 Select the chromeOS milestone you want to install with murkmod. The script will then automatically download the correct recovery image, patch it, and install it to your device. Once the installation is complete, the system will reboot into a murkmod-patched rootfs.
