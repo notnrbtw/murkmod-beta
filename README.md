@@ -4,6 +4,8 @@ When I say storm I'm talking about Murkmod not working (for me at least) on vers
 
 # ALL CREDITS TO 'rainestorme' and r58Playz !!!!!
 
+I own nothing of this project this is JUST a fork!
+
 # murkmod
 
 murkmod is a continuation of fakemurk and mush that includes additional useful utilities, with the most prominent being a plugin manager.
