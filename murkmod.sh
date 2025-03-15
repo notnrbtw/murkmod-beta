@@ -8,7 +8,7 @@ CURRENT_VERSION=2 # Incremented version number
 BRANCH="${MURKMOD_BRANCH:-main}"
 
 get_asset() {
-    curl -s -f "https://api.github.com/repos/rainestorme/murkmod/contents/$1?ref=$BRANCH" | jq -r ".content" | base64 -d
+    curl -s -f "https://api.github.com/repos/Liteinstaller/murkmod-V120-fix-patch/contents/$1?ref=$BRANCH" | jq -r ".content" | base64 -d
 }
 
 get_asset_fakemurk() {
@@ -85,8 +85,8 @@ lsbval() {
     fi
 
     sed -E -n -e "/^[[:space:]]*${key}[[:space:]]*=/ {
-        s:^[^=]+=[[:space:]]*::
-        s:[[:space:]]+$::
+        s:^[^=]+=[[:space:]]*:: 
+        s:[[:space:]]+$:: 
         p
     }" "${lsbfile}"
 }
@@ -130,7 +130,7 @@ check_for_emergencyshell() {
 }
 
 do_policy_patch() {
-    url1="https://raw.githubusercontent.com/rainestorme/murkmod/main/pollen.json"
+    url1="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/main/pollen.json"
     url2="https://raw.githubusercontent.com/MercuryWorkshop/fakemurk/main/pollen.json"
     response1=$(curl -s "$url1")
     response2=$(curl -s "$url2")
