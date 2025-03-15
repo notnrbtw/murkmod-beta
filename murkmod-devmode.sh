@@ -24,7 +24,7 @@ murkmod() {
         4) VERSION="118" ;;
         5) VERSION="latest" ;;
         6) 
-            read -p "Enter milestone to target (e.g. 105, 107, 117, 118): " VERSION 
+            read -p "Enter milestone to target (e.g. 105, 107, 117, 118): " VERSION
             ;;
         *) echo "Invalid choice, exiting." && exit ;;
     esac
@@ -55,7 +55,7 @@ murkmod() {
         echo "Latest version is $VERSION"
     fi
 
-    local url="https://raw.githubusercontent.com/rainestorme/chrome100-json/main/boards/$board.json"
+    local url="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/main/boards/$board.json"
     local json=$(curl -ks "$url")
     chrome_versions=$(echo "$json" | jq -r '.pageProps.images[].chrome')
     echo "Found $(echo "$chrome_versions" | wc -l) versions of chromeOS for your board on chrome100."
@@ -103,3 +103,7 @@ murkmod() {
         echo "No recovery image found for your board and target version. Exiting."
         exit
     fi
+
+    echo "Found recovery image: $FINAL_URL"
+    # Continue the installation process (e.g., downloading, extracting, etc.)
+}
