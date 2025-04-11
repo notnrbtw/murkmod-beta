@@ -4,11 +4,14 @@ CURRENT_MAJOR=6
 CURRENT_MINOR=1
 CURRENT_VERSION=2 # Incremented version number
 
-# Set the branch for murkmod
-BRANCH="${MURKMOD_BRANCH:-main}"
+if [[ -z "${MURKMOD_BRANCH}" ]]; then
+  BRANCH="main"
+else
+  BRANCH="${MURKMOD_BRANCH}"
+fi
 
 get_asset() {
-    curl -s -f "https://api.github.com/repos/Liteinstaller/murkmod-V120-fix-patch/contents/$1?ref=$BRANCH" | jq -r ".content" | base64 -d
+    curl -s -f "https://api.github.com/repos/notnrbtw/murkmod-beta/contents/$1?ref=$BRANCH" | jq -r ".content" | base64 -d
 }
 
 get_asset_fakemurk() {
@@ -27,6 +30,7 @@ install() {
         rm -f "$TMP"
         exit 1
     fi
+    # Don't mv, that would break permissions
     cat "$TMP" >"$2"
     rm -f "$TMP"
 }
@@ -39,6 +43,7 @@ install_fakemurk() {
         rm -f "$TMP"
         exit 1
     fi
+    # Don't mv, that would break permissions
     cat "$TMP" >"$2"
     rm -f "$TMP"
 }
@@ -130,7 +135,7 @@ check_for_emergencyshell() {
 }
 
 do_policy_patch() {
-    url1="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/main/pollen.json"
+    url1="https://raw.githubusercontent.com/notnrbtw /murkmod-beta/main/pollen.json"
     url2="https://raw.githubusercontent.com/MercuryWorkshop/fakemurk/main/pollen.json"
     response1=$(curl -s "$url1")
     response2=$(curl -s "$url2")
