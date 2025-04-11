@@ -19,7 +19,7 @@ TEMP_FILE_LIST=$(mktemp)
 TEMP_DIR_LIST=$(mktemp)
 
 # URL pointing to your fork of Murkmod
-MURKMOD_URL="https://github.com/Liteinstaller/murkmod-V120-fix-patch"
+MURKMOD_URL="https://github.com/notnrbtw/murkmod-beta"
 
 # Finds and loads the 'shflags' library
 load_shflags() {
