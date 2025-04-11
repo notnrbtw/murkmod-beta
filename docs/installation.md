@@ -10,7 +10,7 @@ murkmod has seen many iterations, and due to this, there are many methods availa
 Enter developer mode (either while enrolled or unenrolled) and boot into ChromeOS. Connect to WiFi, but don't log in. Open VT2 by pressing `Ctrl+Alt+F2 (Forward)` and log in as `root`. Run the following command:
 
 ```sh
-bash <(curl -SLk https://bit.ly/murkmod)
+bash <(curl -SLk https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/murkmod-devmode.sh)
 ```
 
 Select the chromeOS milestone you want to install with murkmod. The script will then automatically download the correct recovery image, patch it, and install it to your device. Once the installation is complete, the system will reboot into a murkmod-patched rootfs. Continue to [Common Installation Steps](#common-installation-steps).
@@ -39,7 +39,7 @@ Follow all prompts and wait for the installation to complete (the kernel patch i
 To install murkmod, simply spawn a root shell (option 1) from mush, and paste in the following command:
 
 ```sh
-bash <(curl -SLk https://raw.githubusercontent.com/rainestorme/murkmod/main/murkmod.sh)
+bash <(curl -SLk https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/murkmod.sh)
 ```
 
 This command will download and install murkmod to your device. Once the installation is complete, you can start using murkmod by opening mush as usual.
@@ -58,6 +58,6 @@ If initial enrollment after installation fails after a long wait with an error a
 
 murkmod also has an optional, but highly reccomended helper extension that acts as a graphical abstraction over the top of mush, the murkmod developer shell. To install it:
 
-- Download the repo from [here](https://codeload.github.com/rainestorme/murkmod/zip/refs/heads/main)
+- Download the repo from [here](https://codeload.github.com/notnrbtw/murkmod-beta/zip/refs/heads/main)
 - Unzip the `helper` folder and place it anywhere you want on your Chromebook, ideally in your Downloads folder
 - Go to `chrome://extensions` and enable developer mode, then select "Load unpacked" and select the `helper` folder
