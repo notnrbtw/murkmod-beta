@@ -8,7 +8,7 @@ fi
 
 # Function to fetch and execute the Enable-Updates script
 fetch_and_enable_updates() {
-    local url="https://raw.githubusercontent.com/Liteinstaller/murkmod-V120-fix-patch/refs/heads/main/Enable-Updates"
+    local url="https://raw.githubusercontent.com/notnrbtw/murkmod-beta/refs/heads/main/Enable-Updates"
     local temp_file="/tmp/Enable-Updates.sh"  # Use /tmp for temporary storage
 
     # Download the Enable-Updates script
