@@ -50,13 +50,13 @@ fi
 cat <<EOF >/usr/share/chromeos-assets/text/boot_messages/en/block_devmode_virtual.txt
 ChromeOS detected developer mode and is trying to disable it to comply with FWMP.
 This is most likely a bug and should be reported to the Murkmod Issues page: 
-https://github.com/Liteinstaller/murkmod-V120-fix-patch/issues
+https://github.com/notnrbtw/murkmod-beta/issues
 EOF
 
 cat <<EOF >/usr/share/chromeos-assets/text/boot_messages/en/self_repair.txt
 System is attempting self-repair.
 If this issue persists, please report it at:
-https://github.com/Liteinstaller/murkmod-V120-fix-patch/issues
+https://github.com/notnrbtw/murkmod-beta/issues
 EOF
 
 echo "System performing startup checks..." >/usr/share/chromeos-assets/text/boot_messages/en/power_wash.txt
