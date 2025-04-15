@@ -18,7 +18,7 @@ At the main menu, you have the option to enter a number corresponding to a menu 
 The murkmod installation script (murkmod.sh, **not** the VT2 installer!) reads an environment variable called `MURKMOD_BRANCH` - it is normally set by option `26`, but it can be set by hand by using the following command:
 
 ```bash
-MURKMOD_BRANCH="YOUR_BRANCH_HERE" bash <(curl -SLk https://raw.githubusercontent.com/rainestorme/murkmod/main/murkmod.sh)
+MURKMOD_BRANCH="YOUR_BRANCH_HERE" bash <(curl -SLk https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/murkmod.sh)
 ```
 
 ## File Flags
