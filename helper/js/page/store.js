@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
             allowEnterKey: true,
             showConfirmButton: false
         });
-        fetch("https://api.github.com/repos/rainestorme/murkmod/contents/plugins")
+        fetch("https://api.github.com/repos/notnrbtw/murkmod-beta/contents/plugins")
             .then(response => { return response.json() })
             .then(show_store);
     });
