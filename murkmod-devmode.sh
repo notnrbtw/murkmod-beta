@@ -26,7 +26,7 @@ lsbval() {
 }
 
 get_asset() {
-    curl -s -f "https://api.github.com/repos/notnrbtw/murkmod-beta/contents/$1" | jq -r ".content" | base64 -d
+    curl -s -f "https://api.github.com/repos/rainestorme/murkmod/contents/$1" | jq -r ".content" | base64 -d
 }
 
 install() {
@@ -144,7 +144,7 @@ murkmod() {
         local VERSION=$(echo "$milestones" | tail -n 1 | tr -d '"')
         echo "Latest version is $VERSION"
     fi
-    local url="https://raw.githubusercontent.com/notnrbtw/chrome100-json/main/boards/$board.json"
+    local url="https://raw.githubusercontent.com/rainestorme/chrome100-json/main/boards/$board.json"
     local json=$(curl -ks "$url")
     chrome_versions=$(echo "$json" | jq -r '.pageProps.images[].chrome')
     echo "Found $(echo "$chrome_versions" | wc -l) versions of chromeOS for your board on chrome100."
