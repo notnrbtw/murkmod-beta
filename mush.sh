@@ -247,10 +247,10 @@ api_cd() {
 }
 
 install_plugin_legacy() {
-  local raw_url="https://raw.githubusercontent.com/rainestorme/murkmod/main/plugins"
+  local raw_url="https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/plugins"
 
   echo "Find a plugin you want to install here: "
-  echo "  https://github.com/rainestorme/murkmod/tree/main/plugins"
+  echo "  https://github.com/notnrbtw/murkmod-beta/tree/main/plugins"
   echo "Enter the name of a plugin (including the .sh) to install it (or q to quit):"
   read -r plugin_name
 
@@ -261,13 +261,13 @@ install_plugin_legacy() {
     echo "Plugin not found"
   else      
     echo "Installing..."
-    doas "pushd /mnt/stateful_partition/murkmod/plugins && curl https://raw.githubusercontent.com/rainestorme/murkmod/main/plugins/$plugin_name -O && popd" > /dev/null
+    doas "pushd /mnt/stateful_partition/murkmod/plugins && curl https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/plugins/$plugin_name -O && popd" > /dev/null
     echo "Installed $plugin_name"
   fi
 }
 
 uninstall_plugin_legacy() {
-  local raw_url="https://raw.githubusercontent.com/rainestorme/murkmod/main/plugins"
+  local raw_url="https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/plugins"
   echo "Enter the name of a plugin (including the .sh) to uninstall it (or q to quit):"
   read -r plugin_name
   doas "rm -rf /mnt/stateful_partition/murkmod/plugins/$plugin_name"
@@ -314,7 +314,7 @@ do_dev_updates() {
     echo "This utility allows you to install murkmod from a specific branch on the git repo."
     echo "If you were trying to update murkmod normally, then don't panic! Just enter 'main' at the prompt and everything will work normally."
     read -p "> (branch name, eg. main): " branch
-    doas "MURKMOD_BRANCH=$branch bash <(curl -SLk https://raw.githubusercontent.com/rainestorme/murkmod/main/murkmod.sh)"
+    doas "MURKMOD_BRANCH=$branch bash <(curl -SLk https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/murkmod.sh)"
     exit
 }
 
@@ -412,7 +412,7 @@ enable_dev_boot_usb() {
 
 
 do_updates() {
-    doas "bash <(curl -SLk https://raw.githubusercontent.com/rainestorme/murkmod/main/murkmod.sh)"
+    doas "bash <(curl -SLk https://raw.githubusercontent.com/notnrbtw/murkmod-beta/main/murkmod.sh)"
     exit
 }
 
@@ -478,7 +478,7 @@ show_plugins() {
 install_plugins() {
     clear
     echo "Fetching plugin information..."
-    json=$(curl -s "https://api.github.com/repos/rainestorme/murkmod/contents/plugins")
+    json=$(curl -s "https://api.github.com/repos/notnrbtw/murkmod-beta/contents/plugins")
     file_contents=()
     download_urls=()    
     for entry in $(echo "$json" | jq -c '.[]'); do
